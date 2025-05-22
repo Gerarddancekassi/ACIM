@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A Course in Miracles Verse App</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* SVG Filter Definitions for Film Grain */
+        svg.filters {
+            position: absolute;
+            width: 0;
+            height: 0;
+            overflow: hidden;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif; /* Changed font to Poppins */
+            background-color: #f0f4f8; /* A light base background color */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 1.5rem;
+            box-sizing: border-box;
+            color: #333; /* Default dark text color */
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Base background for the aura star to sit on */
+        .gradient-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none; /* Allow clicks to pass through */
+            z-index: -2; /* Lowest layer */
+            background-color: #2C314B; /* Deep Navy Blue base, or a subtle gradient if preferred */
+        }
+
+        /* Aura Star Background Element */
+        .aura-star {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%); /* Center the aura star */
+            width: 150vmax; /* Large enough to cover the screen with blur */
+            height: 150vmax;
+            border-radius: 50%; /* Start with a circle */
+            z-index: -1; /* Behind content, above base background */
+            pointer-events: none;
+
+            /* Complex radial gradient to create the star emanation effect */
+            background: radial-gradient(
+                circle at 50% 50%,
+                #121862 0%,    /* Center: Light Pink */
+                #020c2f 10%,   /* Yellow */
+                #36187e 25%,   /* Light Green */
+                #032e43 40%,   /* Light Blue */
+                #a18cd1 55%,   /* Lavender */
+                #1c0175 10%,   /* Light Pink */
+                transparent 85% /* Fade to transparent */
+            );
+
+            /* Apply blur and film grain */
+            filter: blur(100px) url(#grain); /* Increased blur for more aura effect */
+            /* Continuous color change */
+            animation: hueRotate 30s linear infinite;
+        }
+
+        @keyframes hueRotate {
+            0% { filter: blur(100px) hue-rotate(0deg) url(#grain); }
+            100% { filter: blur(100px) hue-rotate(360deg) url(#grain); }
+        }
+
+        .verse-display-area, .input-area {
+            width: 90%;
+            max-width: 600px;
+            background-color: #FFFFFF; /* Solid white */
+            border-radius: 10px;
+            box-shadow: 0 10px 20px -5px rgba(0, 0, 0, 0.15), 0 4px 8px -2px rgba(0, 0, 0, 0.08); /* Sleeker shadow */
+            padding: 2rem;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 1; /* Ensure content is above background */
+            -webkit-backdrop-filter: blur(5px); /* Safari/iOS support */
+            backdrop-filter: blur(5px); /* Subtle blur effect for sleekness */
+            filter: none; /* Ensure no film grain on containers */
+        }
+
+        .verse-display-area {
+            min-height: 200px;
+            margin-bottom: 1.5rem;
+        }
+
+        .input-area {
+            gap: 1rem;
+            padding: 1rem;
+            
+        }
+
+        .verse-display-area h2,.verse-display-area p,.input-area textarea {
+            color: #333; /* Dark gray for text on white background */
+        }
+
+.verse-display-area p {
+    text-align: justify;
+}
+
+        textarea {
+            resize: vertical;
+            min-height: 80px;
+            width: 100%;
+            padding: 10px !important;
+            border: 1px solid #ddd; /* Lighter border */
+            border-radius: 10px !important;
+            font-size: 1rem;
+            background-color: #f9f9f9; /* Very light gray for textarea background */
+            box-sizing: border-box;
+            outline: none; /* Remove default outline */
+            transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+        }
+
+        textarea:focus {
+            border-color: #6366f1; /* Accent color on focus */
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2); /* Subtle focus glow */
+        }
+
+        /* Placeholder color for textarea */
+        textarea::placeholder {
+            color: #999; /* Medium gray for placeholder */
+        }
+
+        button {
+            background-color: #6366f1; /* A sleek purple/blue for the button */
+            color: white;
+            margin-top: 20px !important;
+            margin-bottom: 20px !important;
+            padding: 10px 20px !important;
+            border-radius: 10px !important;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.4s ease-in-out, box-shadow 0.3s ease-in-out;
+            border: 1px solid black; /* Transparent border to avoid layout shift */
+            box-shadow: 0 5px 15px rgba(123, 74, 74, 0.1); /* Subtle shadow for depth */
+
+        }
+
+        /* Default button hover (no glow) */
+        button:hover {
+            background-color: #e9ce08; /* Slightly darker on hover */
+            box-shadow: 4 0 5px 15px rgba(0, 0, 0, 0.2); /* Subtle lift effect */
+        }
+
+
+        button {
+            position: relative;
+        }
+
+        .message-box {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: rgba(0, 0, 0, 0.7); /* Darker, semi-transparent */
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            z-index: 1000;
+            opacity: 0;
+            transition: opacity 0.5s ease-in-out;
+        }
+        .message-box.show {
+            opacity: 1;
+        }
+
+        /* Responsive adjustments */
+        @media (min-width: 640px) {
+            /* No specific changes needed here as flex-direction column handles responsiveness well */
+        }
+
+        .star-logo {
+            width: 120px;
+            margin-bottom: 1.5rem;
+            transition: transform 0.3s ease-in-out;
+            z-index: 1; /* Ensure logo is above background */
+            filter: drop-shadow(0 0 10px rgba(255, 215, 0, 0.8)); /* Gold star glow */
+            animation: pulse 1.5s infinite; /* Pulsing effect */}
+
+.star-logo:hover {
+    transform: scale(0.9);
+}
+
+    </style>
+</head>
+<body>
+    <a href="#" onclick="location.reload(); return false;">
+    <img src="Gold Star No Back.png" alt="Gold Star" class="star-logo" />
+</a>
+
+    <svg class="filters">
+        <filter id="grain">
+            <feTurbulence type="fractalNoise" baseFrequency="0.65" numOctaves="3" result="noise" />
+            <feColorMatrix type="saturate" values="0" />
+            <feComposite operator="in" in="noise" in2="SourceGraphic" result="grain" />
+            <feBlend mode="multiply" in="SourceGraphic" in2="grain" />
+        </filter>
+    </svg>
+
+    <div class="gradient-bg"></div>
+    <div class="aura-star"></div>
+
+    <div class="verse-display-area">
+        <h2 class="text-2xl font-semibold mb-4" id="displayTitle">A Course in Miracles</h2>
+        <p id="verseContent" class="text-lg leading-relaxed mb-4">Ask a question to receive a paragraph.</p>
+    </div>
+
+    <div class="input-area">
+        <textarea id="questionInput" placeholder="Ask your question here..."></textarea>
+        <button id="getVerseButton">Get Verse</button>
+    </div>
+
+    <div id="messageBox" class="message-box"></div>
+
+    <script type="module">
+        // Global variables for Firebase configuration, provided by the Canvas environment
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {};
+        const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
+
+        // Function to display a message box
+        function showMessageBox(message, duration = 3000) {
+            const messageBox = document.getElementById('messageBox');
+            messageBox.textContent = message;
+            messageBox.classList.add('show');
+            setTimeout(() => {
+                messageBox.classList.remove('show');
+            }, duration);
+        }
+
+        // Function to get a verse from the "A Course in Miracles" PDF
+        async function getVerseFromACIM(question) {
+            try {
+                let chatHistory = [];
+                // Corrected template literal for the prompt string
+                chatHistory.push({ role: "user", parts: [{ text: `Given the text from 'A Course in Miracles', find a relevant paragraph that best answers the question: "${question}". Provide only the paragraph. Do not include any source information, introductory or concluding remarks.` }] });
+
+                const payload = {
+                    contents: chatHistory,
+                };
+
+                const apiKey = "AIzaSyB3wOuYSy935vclz4OpVNzw-qegFl2z7pY"; // Your API key
+
+                // Corrected template literal for the apiUrl
+                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    console.error("API response error data:", errorData);
+                    // Corrected template literal for the error message
+                    throw new Error(`API error: ${errorData.error ? errorData.error.message : JSON.stringify(errorData)}`);
+                }
+
+                const result = await response.json();
+                if (result.candidates && result.candidates.length > 0 &&
+                    result.candidates[0].content && result.candidates[0].content.parts &&
+                    result.candidates[0].content.parts.length > 0) {
+                    let verse = result.candidates[0].content.parts[0].text.trim();
+                    // Remove any lingering source information if the model still includes it
+                    const sourceRegex = /(Chapter\s+\w+,\s+Section\s+\w+,\s+Paragraph\s+\w+\.?)/i;
+                    verse = verse.replace(sourceRegex, '').trim();
+                    verse = verse.replace(/(\s*[\.,;:]\s*)$/, '').trim(); // Clean up trailing punctuation
+
+                    console.log("Processed Paragraph:", verse);
+                    return { verse: verse }; // Only return the verse (now a paragraph)
+                } else {
+                    console.log("API response structure unexpected or content missing.");
+                    return { verse: "No paragraph found. The model might not have generated content or the structure was unexpected." };
+                }
+            } catch (error) {
+                console.error("Error fetching verse:", error);
+                // Corrected template literal for the showMessageBox error message
+                showMessageBox(`Error: ${error instanceof Error ? error.message : "An unknown error occurred during API call."}. Please try again.`);
+                return { verse: "Failed to retrieve paragraph. Please try again later." };
+            }
+        }
+
+        const questionInput = document.getElementById('questionInput');
+        const getVerseButton = document.getElementById('getVerseButton');
+        const displayTitle = document.getElementById('displayTitle');
+        const verseContent = document.getElementById('verseContent');
+
+        // Function to update button glow based on textarea content
+        function updateButtonGlow() {
+            if (questionInput.value.trim().length > 0) {
+                getVerseButton.classList.add('glow-active');
+            } else {
+                getVerseButton.classList.remove('glow-active');
+            }
+        }
+
+        // Listen for input changes in the textarea
+        questionInput.addEventListener('input', updateButtonGlow);
+
+        getVerseButton.addEventListener('click', async () => {
+            const question = questionInput.value.trim();
+            if (question) {
+                showMessageBox("Searching for a paragraph...");
+                // Clear previous content while searching
+                displayTitle.textContent = "Searching...";
+                verseContent.textContent = "";
+
+                const { verse } = await getVerseFromACIM(question); // Only destructure verse
+
+                displayTitle.textContent = "Your Paragraph:"; // Change title to reflect paragraph
+                verseContent.textContent = verse;
+
+                showMessageBox("Paragraph found!");
+            } else {
+                showMessageBox("Please enter a question.");
+            }
+        });
+
+        // Initial state
+        displayTitle.textContent = "A Course in Miracles";
+        verseContent.textContent = "Ask a question to receive a paragraph.";
+        updateButtonGlow(); // Set initial button state
+    </script>
+</body>
+</html>
