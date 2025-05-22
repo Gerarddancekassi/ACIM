@@ -1,0 +1,191 @@
+/* SVG Filter Definitions for Film Grain */
+svg.filters {
+    position: absolute;
+    width: 0;
+    height: 0;
+    overflow: hidden;
+}
+
+body {
+    font-family: 'Poppins', sans-serif; /* Changed font to Poppins */
+    background-color: #f0f4f8; /* A light base background color */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    margin: 0;
+    padding: 1.5rem;
+    box-sizing: border-box;
+    color: #333; /* Default dark text color */
+    position: relative;
+    overflow: hidden;
+}
+
+/* Base background for the aura star to sit on */
+.gradient-bg {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none; /* Allow clicks to pass through */
+    z-index: -2; /* Lowest layer */
+    background-color: #2C314B; /* Deep Navy Blue base, or a subtle gradient if preferred */
+}
+
+/* Aura Star Background Element */
+.aura-star {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%); /* Center the aura star */
+    width: 150vmax; /* Large enough to cover the screen with blur */
+    height: 150vmax;
+    border-radius: 50%; /* Start with a circle */
+    z-index: -1; /* Behind content, above base background */
+    pointer-events: none;
+
+    /* Complex radial gradient to create the star emanation effect */
+    background: radial-gradient(
+        circle at 50% 50%,
+        #121862 0%,    /* Center: Light Pink */
+        #020c2f 10%,   /* Yellow */
+        #36187e 25%,   /* Light Green */
+        #032e43 40%,   /* Light Blue */
+        #a18cd1 55%,   /* Lavender */
+        #1c0175 10%,   /* Light Pink */
+        transparent 85% /* Fade to transparent */
+    );
+
+    /* Apply blur and film grain */
+    filter: blur(100px) url(#grain); /* Increased blur for more aura effect */
+    /* Continuous color change */
+    animation: hueRotate 30s linear infinite;
+}
+
+@keyframes hueRotate {
+    0% { filter: blur(100px) hue-rotate(0deg) url(#grain); }
+    100% { filter: blur(100px) hue-rotate(360deg) url(#grain); }
+}
+
+.verse-display-area, .input-area {
+    width: 90%;
+    max-width: 600px;
+    background-color: #FFFFFF; /* Solid white */
+    border-radius: 10px;
+    box-shadow: 0 10px 20px -5px rgba(0, 0, 0, 0.15), 0 4px 8px -2px rgba(0, 0, 0, 0.08); /* Sleeker shadow */
+    padding: 2rem;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 1; /* Ensure content is above background */
+    -webkit-backdrop-filter: blur(5px); /* Safari/iOS support */
+    backdrop-filter: blur(5px); /* Subtle blur effect for sleekness */
+    filter: none; /* Ensure no film grain on containers */
+}
+
+.verse-display-area {
+    min-height: 200px;
+    margin-bottom: 1.5rem;
+}
+
+.input-area {
+    gap: 1rem;
+    padding: 1rem;
+    
+}
+
+.verse-display-area h2,.verse-display-area p,.input-area textarea {
+    color: #333; /* Dark gray for text on white background */
+}
+
+.verse-display-area p {
+    text-align: justify;
+}
+
+textarea {
+    resize: vertical;
+    min-height: 80px;
+    width: 100%;
+    padding: 10px !important;
+    border: 1px solid #ddd; /* Lighter border */
+    border-radius: 10px !important;
+    font-size: 1rem;
+    background-color: #f9f9f9; /* Very light gray for textarea background */
+    box-sizing: border-box;
+    outline: none; /* Remove default outline */
+    transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+textarea:focus {
+    border-color: #6366f1; /* Accent color on focus */
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2); /* Subtle focus glow */
+}
+
+/* Placeholder color for textarea */
+textarea::placeholder {
+    color: #999; /* Medium gray for placeholder */
+}
+
+button {
+    background-color: #6366f1; /* A sleek purple/blue for the button */
+    color: white;
+    margin-top: 20px !important;
+    margin-bottom: 20px !important;
+    padding: 10px 20px !important;
+    border-radius: 10px !important;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.4s ease-in-out, box-shadow 0.3s ease-in-out;
+    border: 1px solid black; /* Transparent border to avoid layout shift */
+    box-shadow: 0 5px 15px rgba(123, 74, 74, 0.1); /* Subtle shadow for depth */
+
+}
+
+/* Default button hover (no glow) */
+button:hover {
+    background-color: #e9ce08; /* Slightly darker on hover */
+    box-shadow: 4 0 5px 15px rgba(0, 0, 0, 0.2); /* Subtle lift effect */
+}
+
+
+button {
+    position: relative;
+}
+
+.message-box {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: rgba(0, 0, 0, 0.7); /* Darker, semi-transparent */
+    color: white;
+    padding: 10px 20px;
+    border-radius: 5px;
+    z-index: 1000;
+    opacity: 0;
+    transition: opacity 0.5s ease-in-out;
+}
+.message-box.show {
+    opacity: 1;
+}
+
+/* Responsive adjustments */
+@media (min-width: 640px) {
+    /* No specific changes needed here as flex-direction column handles responsiveness well */
+}
+
+.star-logo {
+    width: 120px;
+    margin-bottom: 1.5rem;
+    transition: transform 0.3s ease-in-out;
+    z-index: 1; /* Ensure logo is above background */
+    filter: drop-shadow(0 0 10px rgba(255, 215, 0, 0.8)); /* Gold star glow */
+    animation: pulse 1.5s infinite; /* Pulsing effect */}
+
+.star-logo:hover {
+    transform: scale(0.9);
+}
